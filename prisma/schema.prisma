@@ -1,0 +1,497 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output = "../generated/prisma_client"
+}
+
+
+model Fakultet {
+  id                    Int                     @id @default(autoincrement())
+  naziv                 String
+  adresa                String?
+  website               String?
+  katedre               Katedra[]
+  akreditacije          AkreditacijaFakulteta[]
+  periodiZaBiranje      PeriodZaBiranje[]
+  grupeNotifikacija     GrupaNotifikacija[]
+  smerovi               Smer[]
+  kursevi               Kurs[]
+  klaseIspitnih         KlasaIspitnogRoka[]
+  klaseKolokvijumskih   KlasaKolokvijumskeNedelje[]
+}
+
+model AkreditacionoTelo {
+  id                    Int                     @id @default(autoincrement())
+  naziv                 String
+  zemlja                String?
+  akreditacijeFakulteta AkreditacijaFakulteta[]
+  akreditacijePrograma  AkreditacijaPrograma[]
+}
+
+model AkreditacijaFakulteta {
+  id                    Int                @id @default(autoincrement())
+  fakultetId            Int
+  akreditacionoTeloId   Int
+  datumAkreditacije     DateTime
+  datumIsteka           DateTime?
+  fakultet              Fakultet           @relation(fields: [fakultetId], references: [id])
+  akreditacionoTelo     AkreditacionoTelo  @relation(fields: [akreditacionoTeloId], references: [id])
+
+
+  @@index([fakultetId])
+  @@index([akreditacionoTeloId])
+}
+
+model Katedra {
+  id                Int                @id @default(autoincrement())
+  naziv             String
+  fakultetId        Int
+  fakultet          Fakultet           @relation(fields: [fakultetId], references: [id])
+  izvodjenjaKurseva IzvodjenjeKursa[]
+
+
+  @@index([fakultetId])
+}
+
+model PeriodZaBiranje {
+  id                Int       @id @default(autoincrement())
+  fakultetId        Int
+  akademskaGodina   String
+  pocetakPerioda    DateTime
+  krajPerioda       DateTime
+  fakultet          Fakultet  @relation(fields: [fakultetId], references: [id])
+
+
+  @@index([fakultetId])
+}
+
+enum NivoStudija {
+  OSNOVNE
+  MASTER
+  DOKTORSKE
+  SPECIJALISTIČKE
+}
+
+model GrupaNotifikacija {
+  id              Int            @id @default(autoincrement())
+  fakultetId      Int
+  nivoStudija     NivoStudija
+  fakultet        Fakultet       @relation(fields: [fakultetId], references: [id])
+  notifikacije    Notifikacija[]
+
+
+  @@index([fakultetId])
+}
+
+model Notifikacija {
+  id                    Int                 @id @default(autoincrement())
+  grupaNotifikacijaId   Int
+  naslov                String
+  sadrzaj               String
+  datumObjavljivanja    DateTime            @default(now())
+  grupaNotifikacija     GrupaNotifikacija   @relation(fields: [grupaNotifikacijaId], references: [id])
+
+
+  @@index([grupaNotifikacijaId])
+}
+
+model Smer {
+  id              Int        @id @default(autoincrement())
+  naziv           String
+  nivoStudija     NivoStudija
+  fakultetId      Int
+  fakultet        Fakultet   @relation(fields: [fakultetId], references: [id])
+  programi        Program[]
+
+  @@index([fakultetId])
+}
+
+model Program {
+  id                Int                    @id @default(autoincrement())
+  smerId            Int
+  naziv             String
+  godina            Int
+  smer              Smer                   @relation(fields: [smerId], references: [id])
+  akreditacije      AkreditacijaPrograma[]
+  moduli            Modul[]
+
+  @@index([smerId])
+}
+
+model AkreditacijaPrograma {
+  id                    Int                @id @default(autoincrement())
+  programId             Int
+  akreditacionoTeloId   Int
+  datumAkreditacije     DateTime
+  datumIsteka           DateTime?
+  program               Program            @relation(fields: [programId], references: [id])
+  akreditacionoTelo     AkreditacionoTelo  @relation(fields: [akreditacionoTeloId], references: [id])
+
+
+  @@index([programId])
+  @@index([akreditacionoTeloId])
+}
+
+model Modul {
+  id              Int             @id @default(autoincrement())
+  naziv           String
+  programId       Int
+  podrazumevajuci Boolean         @default(false)
+  program         Program         @relation(fields: [programId], references: [id])
+  kursevi         KursUModulu[]
+  izborniBlokovi  IzborniBlok[]
+  upisiStudenata  UpisStudenta[]
+
+
+  @@index([programId])
+}
+
+model IzborniBlok {
+  id                  Int             @id @default(autoincrement())
+  modulId             Int
+  semestar            Int
+  ukupnoIzbornih      Int
+  potrebnoBirati      Int
+  modul               Modul           @relation(fields: [modulId], references: [id])
+  kursevi             KursUModulu[]
+  @@index([modulId])
+}
+
+model Kurs {
+  id          Int                @id @default(autoincrement())
+  naziv       String
+  opis        String?
+  fakultetId  Int
+  fakultet    Fakultet           @relation(fields: [fakultetId], references: [id])
+  izvodjenja  IzvodjenjeKursa[]
+  ocene       OcenaKursa[]
+  @@index([fakultetId])
+}
+
+
+
+model IzvodjenjeKursa {
+  id                        Int                       @id @default(autoincrement())
+  kursId                    Int
+  akademskaGodina           String
+  espb                      Int
+  nivoStudija               NivoStudija
+  katedraId                 Int
+  kurs                      Kurs                      @relation(fields: [kursId], references: [id])
+  katedra                   Katedra                   @relation(fields: [katedraId], references: [id])
+  moduli                    KursUModulu[]
+  mogucnostiPrijavljivanja  MogucnostPrijavljivanja[]
+  prijaveIspita             PrijavaIspita[]
+  prijaveKolokvijuma        PrijavaKolokvijuma[]
+
+  @@unique([kursId, akademskaGodina])
+  @@index([kursId])
+  @@index([katedraId])
+}
+
+model KursUModulu {
+  id                  Int              @id @default(autoincrement())
+  izvodjenjeKursaId   Int
+  modulId             Int
+  godinaStudija       Int
+  semestar            Int
+  izborni             Boolean          @default(false)
+  izborniBlokId       Int?
+  izvodjenjeKursa     IzvodjenjeKursa  @relation(fields: [izvodjenjeKursaId], references: [id])
+  modul               Modul            @relation(fields: [modulId], references: [id])
+  izborniBlok         IzborniBlok?     @relation(fields: [izborniBlokId], references: [id])
+  biranjaPredmeta     BiranjePredmeta[]
+
+  @@index([izvodjenjeKursaId])
+  @@index([modulId])
+  @@index([izborniBlokId])
+}
+
+enum TipKorisnika {
+  ADMINISTRATOR
+  STUDENT
+}
+
+model Korisnik {
+  id            Int             @id @default(autoincrement())
+  email         String          @unique
+  lozinka       String
+  ime           String
+  prezime       String
+  tip           TipKorisnika
+  student       Student?
+  administrator Administrator?
+}
+
+model Administrator {
+  id              Int           @id @default(autoincrement())
+  korisnikId      Int           @unique
+  korisnik        Korisnik      @relation(fields: [korisnikId], references: [id])
+  odgovorNaMolbe  Molba[]
+
+}
+
+model Student {
+  id                      Int                       @id @default(autoincrement())
+  korisnikId              Int                       @unique
+  brojIndeksa             String                    @unique
+  korisnik                Korisnik                  @relation(fields: [korisnikId], references: [id])
+  upisi                   UpisStudenta[]
+  statusHistorijat        StatusStudenta[]
+  finansijskeObaveze      FinansijskaObaveza[]
+  molbe                   Molba[]
+  biranjaPredmeta         BiranjePredmeta[]
+  prijaveIspita           PrijavaIspita[]
+  prijaveKolokvijuma      PrijavaKolokvijuma[]
+  disciplinskeMere        DisciplinskaMera[]
+  oceneKurseva            OcenaKursa[]
+
+}
+
+model UpisStudenta {
+  id                Int         @id @default(autoincrement())
+  studentId         Int
+  modulId            Int
+  akademskaGodina   String
+  godinaStudija     Int
+  nivoStudija       NivoStudija
+  naBudzetu         Boolean
+  student           Student     @relation(fields: [studentId], references: [id])
+  modul             Modul        @relation(fields: [modulId], references: [id])
+
+  @@index([studentId])
+  @@index([modulId])
+}
+
+enum AkademskiStatus {
+  REDOVAN
+  MIROVANJE
+  DIPLOMIRAO
+  ISPISAN
+	@@map("AkademskaStatus")
+}
+
+model StatusStudenta {
+  id          Int             @id @default(autoincrement())
+  studentId   Int
+  status      AkademskiStatus
+  datumOd     DateTime
+  datumDo     DateTime?
+  napomena    String?
+  student     Student         @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+}
+
+model FinansijskaObaveza {
+  id          Int       @id @default(autoincrement())
+  studentId   Int
+  iznos       Decimal   @db.Decimal(10, 2)
+  svrha       String
+  datumDospeca DateTime
+  placeno     Boolean   @default(false)
+  datumUplate DateTime?
+  student     Student   @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+}
+
+
+enum StatusMolbe {
+  NA_ČEKANJU
+  ODOBRENA
+  ODBIJENA
+}
+
+model Molba {
+  id                Int            @id @default(autoincrement())
+  studentId         Int
+  sadrzaj           String
+  status            StatusMolbe    @default(NA_ČEKANJU)
+  datumPodnosenja   DateTime       @default(now())
+  administratorId   Int?
+  datumOdgovora     DateTime?
+  napomenaOdgovora  String?
+  student           Student        @relation(fields: [studentId], references: [id])
+  administrator     Administrator? @relation(fields: [administratorId], references: [id])
+
+  @@index([studentId])
+  @@index([administratorId])
+}
+
+model BiranjePredmeta {
+  id              Int           @id @default(autoincrement())
+  studentId       Int
+  kursUModuluId   Int
+  datumBiranja    DateTime      @default(now())
+  student         Student       @relation(fields: [studentId], references: [id])
+  kursUModulu     KursUModulu   @relation(fields: [kursUModuluId], references: [id])
+
+  @@unique([studentId, kursUModuluId])
+  @@index([studentId])
+  @@index([kursUModuluId])
+}
+
+enum TipRoka {
+  ISPITNI_ROK
+  KOLOKVIJUMSKA_NEDELJA
+}
+
+model KlasaIspitnogRoka {
+  id              Int                       @id @default(autoincrement())
+  sifra           String
+  naziv           String
+  fakultetId      Int
+  fakultet        Fakultet                  @relation(fields: [fakultetId], references: [id])
+  realizacije     RealizacijaIspitnogRoka[]
+
+
+  @@index([fakultetId])
+}
+
+model RealizacijaIspitnogRoka {
+  id                        Int                       @id @default(autoincrement())
+  klasaIspitnogRokaId       Int
+  akademskaGodina           String
+  pocetakRoka               DateTime
+  krajRoka                  DateTime
+  pocetakPrijavljivanja     DateTime
+  krajPrijavljivanja        DateTime
+  klasaIspitnogRoka         KlasaIspitnogRoka         @relation(fields: [klasaIspitnogRokaId], references: [id])
+  mogucnostiPrijavljivanja  MogucnostPrijavljivanja[]
+  prijaveIspita             PrijavaIspita[]
+
+
+  @@index([klasaIspitnogRokaId])
+}
+
+model KlasaKolokvijumskeNedelje {
+  id              Int                               @id @default(autoincrement())
+  sifra           String
+  naziv           String
+  fakultetId      Int
+  fakultet        Fakultet                          @relation(fields: [fakultetId], references: [id])
+  realizacije     RealizacijaKolokvijumskeNedelje[]
+
+
+  @@index([fakultetId])
+}
+
+model RealizacijaKolokvijumskeNedelje {
+  id                          Int                         @id @default(autoincrement())
+  klasaKolokvijumskeNedeljeId Int
+  akademskaGodina             String
+  pocetakNedelje              DateTime
+  krajNedelje                 DateTime
+  pocetakPrijavljivanja       DateTime
+  krajPrijavljivanja          DateTime
+  klasaKolokvijumskeNedelje   KlasaKolokvijumskeNedelje   @relation(fields: [klasaKolokvijumskeNedeljeId], references: [id])
+  mogucnostiPrijavljivanja    MogucnostPrijavljivanja[]
+  prijaveKolokvijuma          PrijavaKolokvijuma[]
+
+
+  @@index([klasaKolokvijumskeNedeljeId])
+}
+
+model MogucnostPrijavljivanja {
+  id                                Int                              @id @default(autoincrement())
+  izvodjenjeKursaId                 Int
+  realizacijaIspitnogRokaId         Int?
+  realizacijaKolokvijumskeNedeljeId Int?
+  izvodjenjeKursa                   IzvodjenjeKursa                  @relation(fields: [izvodjenjeKursaId], references: [id])
+  realizacijaIspitnogRoka           RealizacijaIspitnogRoka?         @relation(fields: [realizacijaIspitnogRokaId], references: [id])
+  realizacijaKolokvijumskeNedelje   RealizacijaKolokvijumskeNedelje? @relation(fields: [realizacijaKolokvijumskeNedeljeId], references: [id])
+
+
+  @@index([izvodjenjeKursaId])
+  @@index([realizacijaIspitnogRokaId])
+  @@index([realizacijaKolokvijumskeNedeljeId])
+}
+
+model PrijavaIspita {
+  id                          Int                      @id @default(autoincrement())
+  studentId                   Int
+  izvodjenjeKursaId           Int
+  realizacijaIspitnogRokaId   Int
+  datumPrijave                DateTime                 @default(now())
+  polozio                     Boolean?
+  ocena                       Int?
+  poeni                       Int?
+  napomena                    String?
+  student                     Student                  @relation(fields: [studentId], references: [id])
+  izvodjenjeKursa             IzvodjenjeKursa          @relation(fields: [izvodjenjeKursaId], references: [id])
+  realizacijaIspitnogRoka     RealizacijaIspitnogRoka  @relation(fields: [realizacijaIspitnogRokaId], references: [id])
+
+
+  @@unique([studentId, izvodjenjeKursaId, realizacijaIspitnogRokaId])
+  @@index([studentId])
+  @@index([izvodjenjeKursaId])
+  @@index([realizacijaIspitnogRokaId])
+}
+
+model PrijavaKolokvijuma {
+  id                                Int                             @id @default(autoincrement())
+  studentId                         Int
+  izvodjenjeKursaId                 Int
+  realizacijaKolokvijumskeNedeljeId Int
+  datumPrijave                      DateTime                        @default(now())
+  obaveznaAktivnost                 Boolean
+  polozio                           Boolean?
+  poeni                             Int?
+  student                           Student                         @relation(fields: [studentId], references: [id])
+  izvodjenjeKursa                   IzvodjenjeKursa                 @relation(fields: [izvodjenjeKursaId], references: [id])
+  realizacijaKolokvijumskeNedelje   RealizacijaKolokvijumskeNedelje @relation(fields: [realizacijaKolokvijumskeNedeljeId], references: [id])
+
+
+  @@unique([studentId, izvodjenjeKursaId, realizacijaKolokvijumskeNedeljeId])
+  @@index([studentId])
+  @@index([izvodjenjeKursaId])
+  @@index([realizacijaKolokvijumskeNedeljeId])
+}
+
+model DisciplinskaMera {
+  id                        Int       @id @default(autoincrement())
+  studentId                 Int
+  opis                      String
+  pocetakMere               DateTime
+  krajMere                  DateTime?
+  zabranjeniKurseviIds      Int[]
+  zabranaSvihPredmeta       Boolean   @default(false)
+  student                   Student   @relation(fields: [studentId], references: [id])
+
+
+  @@index([studentId])
+}
+
+enum ParametarOcene {
+  TEZINA
+  PRAKTIČNOST
+  KVALITET_NASTAVE
+  ORGANIZACIJA
+  KORISNOST
+}
+
+model OcenaKursa {
+  id          Int             @id @default(autoincrement())
+  kursId      Int
+  studentId   Int
+  parametar   ParametarOcene
+  ocena       Int
+  komentar    String?
+  kurs        Kurs            @relation(fields: [kursId], references: [id])
+  student     Student         @relation(fields: [studentId], references: [id])
+
+
+  @@unique([kursId, studentId, parametar])
+  @@index([kursId])
+  @@index([studentId])
+}
