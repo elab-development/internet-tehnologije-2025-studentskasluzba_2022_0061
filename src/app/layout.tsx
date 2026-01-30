@@ -1,34 +1,26 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-/**
- * Load Inter font from Google Fonts
- * Optimized by Next.js
- */
-const inter = Inter({ subsets: ["latin"] });
+// app/layout.tsx
+import type { Metadata } from 'next';
+import './globals.css';
 
-/**
- * Metadata for SEO and browser tabs
- */
 export const metadata: Metadata = {
-  title: "FON Portal",
-  description: "Studentski portal Fakulteta Organizacionih Nauka",
+  title: 'FON Portal',
+  description: 'Portal Studentske Službe',
 };
 
-/**
- * Root layout wraps all pages
- * Shared across entire app
- */
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="sr">
-      <body className={inter.className}>
-        {/* Wrap app in session provider so useSession() works */}
-        {children}
+      <body className="flex flex-col min-h-screen">
+        <div className="flex-1">
+          {children}
+        </div>
+        <footer className="bg-green-800 text-white py-4 text-center text-sm sticky top-[100vh]">
+          © {new Date().getFullYear()} Fakultet Organizacionih Nauka. Sva prava zadržana.
+        </footer>
       </body>
     </html>
   );
