@@ -2885,6 +2885,7 @@ export const PeriodZaBiranjeScalarFieldEnum = {
   id: 'id',
   fakultetId: 'fakultetId',
   akademskaGodina: 'akademskaGodina',
+  nivoStudija: 'nivoStudija',
   pocetakPerioda: 'pocetakPerioda',
   krajPerioda: 'krajPerioda'
 } as const

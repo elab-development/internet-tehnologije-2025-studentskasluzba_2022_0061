@@ -40,6 +40,7 @@ export type PeriodZaBiranjeMinAggregateOutputType = {
   id: number | null
   fakultetId: number | null
   akademskaGodina: string | null
+  nivoStudija: $Enums.NivoStudija | null
   pocetakPerioda: Date | null
   krajPerioda: Date | null
 }
@@ -48,6 +49,7 @@ export type PeriodZaBiranjeMaxAggregateOutputType = {
   id: number | null
   fakultetId: number | null
   akademskaGodina: string | null
+  nivoStudija: $Enums.NivoStudija | null
   pocetakPerioda: Date | null
   krajPerioda: Date | null
 }
@@ -56,6 +58,7 @@ export type PeriodZaBiranjeCountAggregateOutputType = {
   id: number
   fakultetId: number
   akademskaGodina: number
+  nivoStudija: number
   pocetakPerioda: number
   krajPerioda: number
   _all: number
@@ -76,6 +79,7 @@ export type PeriodZaBiranjeMinAggregateInputType = {
   id?: true
   fakultetId?: true
   akademskaGodina?: true
+  nivoStudija?: true
   pocetakPerioda?: true
   krajPerioda?: true
 }
@@ -84,6 +88,7 @@ export type PeriodZaBiranjeMaxAggregateInputType = {
   id?: true
   fakultetId?: true
   akademskaGodina?: true
+  nivoStudija?: true
   pocetakPerioda?: true
   krajPerioda?: true
 }
@@ -92,6 +97,7 @@ export type PeriodZaBiranjeCountAggregateInputType = {
   id?: true
   fakultetId?: true
   akademskaGodina?: true
+  nivoStudija?: true
   pocetakPerioda?: true
   krajPerioda?: true
   _all?: true
@@ -187,6 +193,7 @@ export type PeriodZaBiranjeGroupByOutputType = {
   id: number
   fakultetId: number
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date
   krajPerioda: Date
   _count: PeriodZaBiranjeCountAggregateOutputType | null
@@ -218,6 +225,7 @@ export type PeriodZaBiranjeWhereInput = {
   id?: Prisma.IntFilter<"PeriodZaBiranje"> | number
   fakultetId?: Prisma.IntFilter<"PeriodZaBiranje"> | number
   akademskaGodina?: Prisma.StringFilter<"PeriodZaBiranje"> | string
+  nivoStudija?: Prisma.EnumNivoStudijaFilter<"PeriodZaBiranje"> | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
   krajPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
   fakultet?: Prisma.XOR<Prisma.FakultetScalarRelationFilter, Prisma.FakultetWhereInput>
@@ -227,6 +235,7 @@ export type PeriodZaBiranjeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   fakultetId?: Prisma.SortOrder
   akademskaGodina?: Prisma.SortOrder
+  nivoStudija?: Prisma.SortOrder
   pocetakPerioda?: Prisma.SortOrder
   krajPerioda?: Prisma.SortOrder
   fakultet?: Prisma.FakultetOrderByWithRelationInput
@@ -239,6 +248,7 @@ export type PeriodZaBiranjeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PeriodZaBiranjeWhereInput | Prisma.PeriodZaBiranjeWhereInput[]
   fakultetId?: Prisma.IntFilter<"PeriodZaBiranje"> | number
   akademskaGodina?: Prisma.StringFilter<"PeriodZaBiranje"> | string
+  nivoStudija?: Prisma.EnumNivoStudijaFilter<"PeriodZaBiranje"> | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
   krajPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
   fakultet?: Prisma.XOR<Prisma.FakultetScalarRelationFilter, Prisma.FakultetWhereInput>
@@ -248,6 +258,7 @@ export type PeriodZaBiranjeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   fakultetId?: Prisma.SortOrder
   akademskaGodina?: Prisma.SortOrder
+  nivoStudija?: Prisma.SortOrder
   pocetakPerioda?: Prisma.SortOrder
   krajPerioda?: Prisma.SortOrder
   _count?: Prisma.PeriodZaBiranjeCountOrderByAggregateInput
@@ -264,12 +275,14 @@ export type PeriodZaBiranjeScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"PeriodZaBiranje"> | number
   fakultetId?: Prisma.IntWithAggregatesFilter<"PeriodZaBiranje"> | number
   akademskaGodina?: Prisma.StringWithAggregatesFilter<"PeriodZaBiranje"> | string
+  nivoStudija?: Prisma.EnumNivoStudijaWithAggregatesFilter<"PeriodZaBiranje"> | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeWithAggregatesFilter<"PeriodZaBiranje"> | Date | string
   krajPerioda?: Prisma.DateTimeWithAggregatesFilter<"PeriodZaBiranje"> | Date | string
 }
 
 export type PeriodZaBiranjeCreateInput = {
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
   fakultet: Prisma.FakultetCreateNestedOneWithoutPeriodiZaBiranjeInput
@@ -279,12 +292,14 @@ export type PeriodZaBiranjeUncheckedCreateInput = {
   id?: number
   fakultetId: number
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
 }
 
 export type PeriodZaBiranjeUpdateInput = {
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fakultet?: Prisma.FakultetUpdateOneRequiredWithoutPeriodiZaBiranjeNestedInput
@@ -294,6 +309,7 @@ export type PeriodZaBiranjeUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fakultetId?: Prisma.IntFieldUpdateOperationsInput | number
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -302,12 +318,14 @@ export type PeriodZaBiranjeCreateManyInput = {
   id?: number
   fakultetId: number
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
 }
 
 export type PeriodZaBiranjeUpdateManyMutationInput = {
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,6 +334,7 @@ export type PeriodZaBiranjeUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fakultetId?: Prisma.IntFieldUpdateOperationsInput | number
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -334,6 +353,7 @@ export type PeriodZaBiranjeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fakultetId?: Prisma.SortOrder
   akademskaGodina?: Prisma.SortOrder
+  nivoStudija?: Prisma.SortOrder
   pocetakPerioda?: Prisma.SortOrder
   krajPerioda?: Prisma.SortOrder
 }
@@ -347,6 +367,7 @@ export type PeriodZaBiranjeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fakultetId?: Prisma.SortOrder
   akademskaGodina?: Prisma.SortOrder
+  nivoStudija?: Prisma.SortOrder
   pocetakPerioda?: Prisma.SortOrder
   krajPerioda?: Prisma.SortOrder
 }
@@ -355,6 +376,7 @@ export type PeriodZaBiranjeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fakultetId?: Prisma.SortOrder
   akademskaGodina?: Prisma.SortOrder
+  nivoStudija?: Prisma.SortOrder
   pocetakPerioda?: Prisma.SortOrder
   krajPerioda?: Prisma.SortOrder
 }
@@ -406,8 +428,13 @@ export type PeriodZaBiranjeUncheckedUpdateManyWithoutFakultetNestedInput = {
   deleteMany?: Prisma.PeriodZaBiranjeScalarWhereInput | Prisma.PeriodZaBiranjeScalarWhereInput[]
 }
 
+export type EnumNivoStudijaFieldUpdateOperationsInput = {
+  set?: $Enums.NivoStudija
+}
+
 export type PeriodZaBiranjeCreateWithoutFakultetInput = {
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
 }
@@ -415,6 +442,7 @@ export type PeriodZaBiranjeCreateWithoutFakultetInput = {
 export type PeriodZaBiranjeUncheckedCreateWithoutFakultetInput = {
   id?: number
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
 }
@@ -452,6 +480,7 @@ export type PeriodZaBiranjeScalarWhereInput = {
   id?: Prisma.IntFilter<"PeriodZaBiranje"> | number
   fakultetId?: Prisma.IntFilter<"PeriodZaBiranje"> | number
   akademskaGodina?: Prisma.StringFilter<"PeriodZaBiranje"> | string
+  nivoStudija?: Prisma.EnumNivoStudijaFilter<"PeriodZaBiranje"> | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
   krajPerioda?: Prisma.DateTimeFilter<"PeriodZaBiranje"> | Date | string
 }
@@ -459,12 +488,14 @@ export type PeriodZaBiranjeScalarWhereInput = {
 export type PeriodZaBiranjeCreateManyFakultetInput = {
   id?: number
   akademskaGodina: string
+  nivoStudija: $Enums.NivoStudija
   pocetakPerioda: Date | string
   krajPerioda: Date | string
 }
 
 export type PeriodZaBiranjeUpdateWithoutFakultetInput = {
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -472,6 +503,7 @@ export type PeriodZaBiranjeUpdateWithoutFakultetInput = {
 export type PeriodZaBiranjeUncheckedUpdateWithoutFakultetInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -479,6 +511,7 @@ export type PeriodZaBiranjeUncheckedUpdateWithoutFakultetInput = {
 export type PeriodZaBiranjeUncheckedUpdateManyWithoutFakultetInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   akademskaGodina?: Prisma.StringFieldUpdateOperationsInput | string
+  nivoStudija?: Prisma.EnumNivoStudijaFieldUpdateOperationsInput | $Enums.NivoStudija
   pocetakPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   krajPerioda?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -489,6 +522,7 @@ export type PeriodZaBiranjeSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   fakultetId?: boolean
   akademskaGodina?: boolean
+  nivoStudija?: boolean
   pocetakPerioda?: boolean
   krajPerioda?: boolean
   fakultet?: boolean | Prisma.FakultetDefaultArgs<ExtArgs>
@@ -498,6 +532,7 @@ export type PeriodZaBiranjeSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   fakultetId?: boolean
   akademskaGodina?: boolean
+  nivoStudija?: boolean
   pocetakPerioda?: boolean
   krajPerioda?: boolean
   fakultet?: boolean | Prisma.FakultetDefaultArgs<ExtArgs>
@@ -507,6 +542,7 @@ export type PeriodZaBiranjeSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   fakultetId?: boolean
   akademskaGodina?: boolean
+  nivoStudija?: boolean
   pocetakPerioda?: boolean
   krajPerioda?: boolean
   fakultet?: boolean | Prisma.FakultetDefaultArgs<ExtArgs>
@@ -516,11 +552,12 @@ export type PeriodZaBiranjeSelectScalar = {
   id?: boolean
   fakultetId?: boolean
   akademskaGodina?: boolean
+  nivoStudija?: boolean
   pocetakPerioda?: boolean
   krajPerioda?: boolean
 }
 
-export type PeriodZaBiranjeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fakultetId" | "akademskaGodina" | "pocetakPerioda" | "krajPerioda", ExtArgs["result"]["periodZaBiranje"]>
+export type PeriodZaBiranjeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fakultetId" | "akademskaGodina" | "nivoStudija" | "pocetakPerioda" | "krajPerioda", ExtArgs["result"]["periodZaBiranje"]>
 export type PeriodZaBiranjeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fakultet?: boolean | Prisma.FakultetDefaultArgs<ExtArgs>
 }
@@ -540,6 +577,7 @@ export type $PeriodZaBiranjePayload<ExtArgs extends runtime.Types.Extensions.Int
     id: number
     fakultetId: number
     akademskaGodina: string
+    nivoStudija: $Enums.NivoStudija
     pocetakPerioda: Date
     krajPerioda: Date
   }, ExtArgs["result"]["periodZaBiranje"]>
@@ -969,6 +1007,7 @@ export interface PeriodZaBiranjeFieldRefs {
   readonly id: Prisma.FieldRef<"PeriodZaBiranje", 'Int'>
   readonly fakultetId: Prisma.FieldRef<"PeriodZaBiranje", 'Int'>
   readonly akademskaGodina: Prisma.FieldRef<"PeriodZaBiranje", 'String'>
+  readonly nivoStudija: Prisma.FieldRef<"PeriodZaBiranje", 'NivoStudija'>
   readonly pocetakPerioda: Prisma.FieldRef<"PeriodZaBiranje", 'DateTime'>
   readonly krajPerioda: Prisma.FieldRef<"PeriodZaBiranje", 'DateTime'>
 }

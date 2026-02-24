@@ -374,10 +374,6 @@ export type GrupaNotifikacijaUncheckedUpdateManyWithoutFakultetNestedInput = {
   deleteMany?: Prisma.GrupaNotifikacijaScalarWhereInput | Prisma.GrupaNotifikacijaScalarWhereInput[]
 }
 
-export type EnumNivoStudijaFieldUpdateOperationsInput = {
-  set?: $Enums.NivoStudija
-}
-
 export type GrupaNotifikacijaCreateNestedOneWithoutNotifikacijeInput = {
   create?: Prisma.XOR<Prisma.GrupaNotifikacijaCreateWithoutNotifikacijeInput, Prisma.GrupaNotifikacijaUncheckedCreateWithoutNotifikacijeInput>
   connectOrCreate?: Prisma.GrupaNotifikacijaCreateOrConnectWithoutNotifikacijeInput
