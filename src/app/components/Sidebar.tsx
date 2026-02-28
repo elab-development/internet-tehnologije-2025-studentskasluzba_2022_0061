@@ -12,7 +12,7 @@ type Props = {
   role: 'STUDENT' | 'ADMINISTRATOR';
 };
 
-export function Sidebar({ role }: any) {
+export function Sidebar({ role }: Props) {
   const router = useRouter();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -86,6 +86,13 @@ export function Sidebar({ role }: any) {
                 className="block rounded px-3 py-2 hover:bg-green-600"
               >
                 Biranje predmeta
+              </Link>
+
+              <Link
+                href="/student/moji-predmeti"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Moji predmeti
               </Link>
 
               <DropdownMenu>
