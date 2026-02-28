@@ -63,8 +63,8 @@ model PeriodZaBiranje {
   id              Int          @id @default(autoincrement())
   fakultetId      Int
   akademskaGodina String
-  nivoStudija     NivoStudija
-  pocetakPerioda  DateTime
+  nivoStudija     NivoStudija  
+  pocetakPerioda  DateTime    
   krajPerioda     DateTime
   fakultet        Fakultet     @relation(fields: [fakultetId], references: [id])
 

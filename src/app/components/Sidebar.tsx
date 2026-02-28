@@ -35,9 +35,9 @@ export function Sidebar({ role }: any) {
             href="/home"
             className="block rounded px-3 py-2 hover:bg-green-600"
           >
-            Početna 
+            Početna
           </Link>
-          
+
           {role === 'ADMINISTRATOR' && (
             <>
               <Link
@@ -46,36 +46,69 @@ export function Sidebar({ role }: any) {
               >
                 Dodaj obaveštenje
               </Link>
+
               <Link
                 href="/admin/molbe"
                 className="block rounded px-3 py-2 hover:bg-green-600"
               >
                 Molbe
               </Link>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">
+                    Biranje predmeta
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="w-56 bg-green-600 text-white border-green-500">
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/periodi-prijava" className="cursor-pointer">
+                      Aktivni periodi biranja
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/periodi-prijava/novi" className="cursor-pointer">
+                      Novi period biranja
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
-          
+
           {role === 'STUDENT' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">
-                  Molbe
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-green-600 text-white border-green-500">
-                <DropdownMenuItem asChild>
-                  <Link href="/student/molbe" className="cursor-pointer">
-                    Moje molbe
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/student/molbe/nova" className="cursor-pointer">
-                    Nova molba
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <>
+              <Link
+                href="/student/biranje-predmeta"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Biranje predmeta
+              </Link>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">
+                    Molbe
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-green-600 text-white border-green-500">
+                  <DropdownMenuItem asChild>
+                    <Link href="/student/molbe" className="cursor-pointer">
+                      Moje molbe
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/student/molbe/nova" className="cursor-pointer">
+                      Nova molba
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
         </nav>
         <Button
