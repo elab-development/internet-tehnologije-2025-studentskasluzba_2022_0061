@@ -76,6 +76,24 @@ async function main() {
         })
     ))
 
+    await prisma.klasaIspitnogRoka.createMany({
+        data: [
+            { sifra: 'JAN1', naziv: 'Januarski ispitni rok', fakultetId: fakultet.id },
+            { sifra: 'FEB1', naziv: 'Februarski ispitni rok', fakultetId: fakultet.id },
+            { sifra: 'JUN1', naziv: 'Junski ispitni rok', fakultetId: fakultet.id },
+            { sifra: 'JUL1', naziv: 'Julski ispitni rok', fakultetId: fakultet.id },
+            { sifra: 'SEP1', naziv: 'Septembarski ispitni rok', fakultetId: fakultet.id },
+            { sifra: 'OKT1', naziv: 'Oktobarski ispitni rok', fakultetId: fakultet.id },
+        ],
+    })
+
+    await prisma.klasaKolokvijumskeNedelje.createMany({
+        data: [
+            { sifra: 'K1', naziv: 'Prva kolokvijumska nedelja', fakultetId: fakultet.id },
+            { sifra: 'K2', naziv: 'Druga kolokvijumska nedelja', fakultetId: fakultet.id },
+        ],
+    })
+
     // Create notification groups for each academic level
     const grupaOsnovne = await prisma.grupaNotifikacija.create({
         data: {
@@ -587,7 +605,7 @@ async function main() {
                 katedraId: findKatedra('ekonomiju').id,
             },
         }),
-        // Semester 2
+        // semestar 2
         prisma.izvodjenjeKursa.create({
             data: {
                 kursId: findKurs('Poslovne finansije').id,

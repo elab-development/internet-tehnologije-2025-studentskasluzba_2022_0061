@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
+import { findHolidayConflicts } from '@/lib/publicHolidays';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -31,6 +32,22 @@ export async function POST(req: Request) {
     if (new Date(pocetakPerioda) >= new Date(krajPerioda)) {
       return new Response(
         JSON.stringify({ error: 'Invalid date range' }),
+        { status: 400 }
+      );
+    }
+
+    const holidayConflicts = await findHolidayConflicts([
+      { label: 'Pocetak perioda', date: new Date(pocetakPerioda) },
+      { label: 'Kraj perioda', date: new Date(krajPerioda) },
+    ]);
+
+    if (holidayConflicts.length > 0) {
+      const details = holidayConflicts
+        .map(conflict => `${conflict.label}: ${conflict.isoDate} (${conflict.holidayName})`)
+        .join('; ');
+
+      return new Response(
+        JSON.stringify({ error: `Izabrani datumi padaju na drzavni praznik. ${details}` }),
         { status: 400 }
       );
     }

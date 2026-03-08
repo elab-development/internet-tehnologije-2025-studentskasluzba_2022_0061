@@ -54,6 +54,13 @@ export function Sidebar({ role }: Props) {
                 Molbe
               </Link>
 
+              <Link
+                href="/admin/realizacije/nova"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Nova realizacija
+              </Link>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">
@@ -93,6 +100,13 @@ export function Sidebar({ role }: Props) {
                 className="block rounded px-3 py-2 hover:bg-green-600"
               >
                 Moji predmeti
+              </Link>
+
+              <Link
+                href="/student/prijava"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Prijava ispita
               </Link>
 
               <DropdownMenu>

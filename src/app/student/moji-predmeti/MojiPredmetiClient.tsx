@@ -149,7 +149,7 @@ export function MojiPredmetiClient() {
 
               <Card className="border-green-200">
                 <CardContent className="p-5">
-                  <p className="text-sm text-gray-600">Polozeni predmeti</p>
+                  <p className="text-sm text-gray-600">Položeni predmeti</p>
                   <p className="mt-2 text-3xl font-semibold text-green-800">
                     {data.passedCount}
                   </p>
@@ -158,7 +158,7 @@ export function MojiPredmetiClient() {
 
               <Card className="border-green-200">
                 <CardContent className="p-5">
-                  <p className="text-sm text-gray-600">Prosecna ocena</p>
+                  <p className="text-sm text-gray-600">Prosečna ocena</p>
                   <p className="mt-2 text-3xl font-semibold text-green-800">
                     {data.averageGrade ?? '-'}
                   </p>
@@ -204,7 +204,7 @@ export function MojiPredmetiClient() {
                               {item.izborni ? 'Izborni predmet' : 'Obavezan predmet'}
                             </Badge>
                             <Badge className={item.ocena ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' : 'bg-gray-100 text-gray-700 hover:bg-gray-100'}>
-                              {item.ocena ? `Ocena: ${item.ocena}` : 'Nije polozen'}
+                              {item.ocena ? `Ocena: ${item.ocena}` : 'Nije položen'}
                             </Badge>
                           </div>
                         </div>
@@ -220,7 +220,7 @@ export function MojiPredmetiClient() {
                         <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
                           <p>Program: {item.program}</p>
                           <p>Datum izbora: {new Date(item.datumBiranja).toLocaleDateString('sr-RS')}</p>
-                          <p>Status: {item.ocena ? 'Polozen' : 'Nije polozen'}</p>
+                          <p>Status: {item.ocena ? 'Položen' : 'Nije položen'}</p>
                         </div>
                       </CardContent>
                     </Card>
