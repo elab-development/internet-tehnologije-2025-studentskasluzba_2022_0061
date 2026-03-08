@@ -148,19 +148,49 @@ async function loadSelectionContext(studentId: number) {
         },
       });
 
+  const baseCourseIds = [...new Set(
+    courses.map(course => course.izvodjenjeKursa.kursId)
+  )];
+
+  const ratingRows = baseCourseIds.length === 0
+    ? []
+    : await prisma.ocenaKursa.groupBy({
+        by: ['kursId'],
+        where: {
+          kursId: { in: baseCourseIds },
+        },
+        _avg: {
+          ocena: true,
+        },
+        _count: {
+          ocena: true,
+        },
+      });
+
+  const ratingsByCourseId = new Map<number, { average: number | null; count: number }>(
+    ratingRows.map(row => [
+      row.kursId,
+      {
+        average: row._avg.ocena ?? null,
+        count: row._count.ocena,
+      },
+    ])
+  );
+
 
   //vracamo kontekst: da li je period aktivan, najskoriji upis, kursevi za modul iz trenutne godine, i vec izabrane predmete ako postoje
   return {
     activePeriod,
     latestUpis,
     courses,
+    ratingsByCourseId,
     selectedCourseIds: selectedRows.map(row => row.kursUModuluId),
   };
 }
 
 //helper za return value
 function buildResponse(context: Awaited<ReturnType<typeof loadSelectionContext>>) {
-  const { activePeriod, latestUpis, courses, selectedCourseIds } = context;
+  const { activePeriod, latestUpis, courses, ratingsByCourseId, selectedCourseIds } = context;
 
   return {
     activePeriod: !!activePeriod,
@@ -192,6 +222,8 @@ function buildResponse(context: Awaited<ReturnType<typeof loadSelectionContext>>
         naziv: course.izvodjenjeKursa.kurs.naziv,
         opis: course.izvodjenjeKursa.kurs.opis,
         espb: course.izvodjenjeKursa.espb,
+        averageRating: ratingsByCourseId.get(course.izvodjenjeKursa.kursId)?.average ?? null,
+        ratingCount: ratingsByCourseId.get(course.izvodjenjeKursa.kursId)?.count ?? 0,
       },
     })),
     selectedCourseIds,

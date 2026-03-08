@@ -109,6 +109,13 @@ export function Sidebar({ role }: Props) {
                 Prijava ispita
               </Link>
 
+              <Link
+                href="/student/ocena-predmeta"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Ocena predmeta
+              </Link>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">

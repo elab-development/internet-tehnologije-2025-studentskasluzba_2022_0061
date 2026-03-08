@@ -25,6 +25,8 @@ type CourseItem = {
     naziv: string;
     opis: string | null;
     espb: number;
+    averageRating: number | null;
+    ratingCount: number;
   };
 };
 
@@ -253,6 +255,11 @@ export function PredmetiClient() {
                 </h3>
                 <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                   {course.course.espb} ESPB
+                </Badge>
+                <Badge variant="outline" className="border-blue-300 text-blue-800">
+                  {course.course.averageRating === null
+                    ? 'Ocena: nema'
+                    : `Ocena: ${course.course.averageRating.toFixed(2)} / 5 (${course.course.ratingCount})`}
                 </Badge>
                 {isMandatory ? (
                   <Badge variant="outline" className="border-green-300 text-green-800">
