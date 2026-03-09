@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -40,6 +40,32 @@ export function SearchableSelect({
     if (!normalized) return options;
     return options.filter(option => option.label.toLowerCase().includes(normalized));
   }, [options, query]);
+  const previousQueryRef = useRef(query);
+
+  useEffect(() => {
+    if (disabled) return;
+
+    const queryChanged = previousQueryRef.current !== query;
+    previousQueryRef.current = query;
+
+    if (filteredOptions.length === 0) {
+      if (value !== '') {
+        onValueChange('');
+      }
+      return;
+    }
+
+    const hasCurrentValue = filteredOptions.some(option => option.value === value);
+
+    if (!queryChanged && hasCurrentValue) {
+      return;
+    }
+
+    const firstMatch = filteredOptions[0].value;
+    if (value !== firstMatch) {
+      onValueChange(firstMatch);
+    }
+  }, [disabled, filteredOptions, onValueChange, query, value]);
 
   return (
     <div className="space-y-2">
