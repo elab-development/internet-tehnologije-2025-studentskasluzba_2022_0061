@@ -8,16 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { COURSE_RATING_KEYS, COURSE_RATING_LABELS, type CourseRatingKey } from '@/lib/courseRatings';
 
-const PARAMETER_FIELDS = [
-  { key: 'TEZINA', label: 'Tezina' },
-  { key: 'PRAKTI\u00C4\u0152NOST', label: 'Prakticnost' },
-  { key: 'KVALITET_NASTAVE', label: 'Kvalitet nastave' },
-  { key: 'ORGANIZACIJA', label: 'Organizacija' },
-  { key: 'KORISNOST', label: 'Korisnost' },
-] as const;
+const PARAMETER_FIELDS = COURSE_RATING_KEYS.map(key => ({
+  key,
+  label: COURSE_RATING_LABELS[key],
+})) as ReadonlyArray<{ key: CourseRatingKey; label: string }>;
 
-type ParameterKey = (typeof PARAMETER_FIELDS)[number]['key'];
+type ParameterKey = CourseRatingKey;
 type Ratings = Record<ParameterKey, number>;
 
 type CourseItem = {
@@ -34,13 +32,10 @@ type ResponseShape = {
 };
 
 function buildInitialRatings(source?: Record<ParameterKey, number | null>): Ratings {
-  return {
-    TEZINA: source?.TEZINA ?? 3,
-    PRAKTI\u00C4\u0152NOST: source?.PRAKTI\u00C4\u0152NOST ?? 3,
-    KVALITET_NASTAVE: source?.KVALITET_NASTAVE ?? 3,
-    ORGANIZACIJA: source?.ORGANIZACIJA ?? 3,
-    KORISNOST: source?.KORISNOST ?? 3,
-  };
+  return COURSE_RATING_KEYS.reduce((acc, key) => {
+    acc[key] = source?.[key] ?? 3;
+    return acc;
+  }, {} as Ratings);
 }
 
 export default function OcenaPredmetaPage() {

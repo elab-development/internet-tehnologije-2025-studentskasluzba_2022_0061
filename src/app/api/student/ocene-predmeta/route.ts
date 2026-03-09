@@ -1,16 +1,8 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
+import { COURSE_RATING_KEYS, normalizeCourseRatingKey, type CourseRatingKey } from '@/lib/courseRatings';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const RATING_KEYS = [
-  'TEZINA',
-  'PRAKTIČNOST',
-  'KVALITET_NASTAVE',
-  'ORGANIZACIJA',
-  'KORISNOST',
-] as const;
-
-type RatingKey = (typeof RATING_KEYS)[number];
 
 function parseCookie(header: string | null) {
   if (!header) return {};
@@ -126,20 +118,20 @@ export async function GET(req: Request) {
           },
         });
 
-    const ratingsMap = new Map<number, Partial<Record<RatingKey, number>>>();
+    const ratingsMap = new Map<number, Partial<Record<CourseRatingKey, number>>>();
     for (const row of existingRatings) {
       const current = ratingsMap.get(row.kursId) ?? {};
-      const key = row.parametar as RatingKey;
+      const key = row.parametar as CourseRatingKey;
       current[key] = row.ocena;
       ratingsMap.set(row.kursId, current);
     }
 
     const items = [...uniqueByCourse.values()].map(course => ({
       ...course,
-      ratings: RATING_KEYS.reduce((acc, key) => {
+      ratings: COURSE_RATING_KEYS.reduce((acc, key) => {
         acc[key] = ratingsMap.get(course.kursId)?.[key] ?? null;
         return acc;
-      }, {} as Record<RatingKey, number | null>),
+      }, {} as Record<CourseRatingKey, number | null>),
     }));
 
     return new Response(JSON.stringify({ items }), {
@@ -181,11 +173,19 @@ export async function PUT(req: Request) {
       });
     }
 
-    const ratings = RATING_KEYS.reduce((acc, key) => {
-      const value = Number((rawRatings as Record<string, unknown>)[key]);
-      acc[key] = value;
+    const rawRatingsMap = rawRatings as Record<string, unknown>;
+    const normalizedRatings = new Map<CourseRatingKey, number>();
+
+    for (const [rawKey, rawValue] of Object.entries(rawRatingsMap)) {
+      const normalizedKey = normalizeCourseRatingKey(rawKey);
+      if (!normalizedKey) continue;
+      normalizedRatings.set(normalizedKey, Number(rawValue));
+    }
+
+    const ratings = COURSE_RATING_KEYS.reduce((acc, key) => {
+      acc[key] = normalizedRatings.get(key) ?? Number.NaN;
       return acc;
-    }, {} as Record<RatingKey, number>);
+    }, {} as Record<CourseRatingKey, number>);
 
     const invalid = Object.values(ratings).some(value => !Number.isInteger(value) || value < 1 || value > 5);
     if (invalid) {
@@ -219,7 +219,7 @@ export async function PUT(req: Request) {
         where: { studentId, kursId },
       }),
       prisma.ocenaKursa.createMany({
-        data: RATING_KEYS.map(parametar => ({
+        data: COURSE_RATING_KEYS.map(parametar => ({
           studentId,
           kursId,
           parametar,
