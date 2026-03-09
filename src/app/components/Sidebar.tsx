@@ -68,6 +68,13 @@ export function Sidebar({ role }: Props) {
                 Upis ocena
               </Link>
 
+              <Link
+                href="/admin/analitika"
+                className="block rounded px-3 py-2 hover:bg-green-600"
+              >
+                Analitika
+              </Link>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-full flex items-center justify-between rounded px-3 py-2 hover:bg-green-600">
