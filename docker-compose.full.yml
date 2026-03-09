@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: studentska-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: prisma
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    networks:
+      - app-network
+
+  prisma-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: studentska-prisma-migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    command: sh -c "npx prisma migrate deploy"
+    restart: "no"
+    networks:
+      - app-network
+
+  prisma-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: studentska-prisma-seed
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prisma-migrate:
+        condition: service_completed_successfully
+    env_file:
+      - .env.docker
+    command: sh -c "npm run prisma:seed"
+    restart: "no"
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    image: studentska-sluzba-app:latest
+    container_name: studentska-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prisma-migrate:
+        condition: service_completed_successfully
+      prisma-seed:
+        condition: service_completed_successfully
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  postgres_data:

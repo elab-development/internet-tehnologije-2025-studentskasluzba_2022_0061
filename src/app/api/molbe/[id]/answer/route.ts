@@ -9,7 +9,7 @@ function parseCookie(header: string | null) {
   return Object.fromEntries(header.split(';').map(p => p.trim().split('=', 2)));
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const cookieHeader = req.headers.get('cookie');
     const cookies = parseCookie(cookieHeader);
@@ -61,8 +61,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       });
     }
 
+    const { id } = await params;
+
     const molba = await prisma.molba.update({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       data: {
         status,
         napomenaOdgovora,

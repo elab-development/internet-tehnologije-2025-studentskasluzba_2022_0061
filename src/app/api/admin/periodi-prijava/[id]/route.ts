@@ -10,7 +10,7 @@ function parseCookie(header: string | null) {
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieHeader = req.headers.get('cookie');
@@ -22,7 +22,8 @@ export async function PUT(
     if (payload.tip !== 'ADMINISTRATOR')
       return new Response('Forbidden', { status: 403 });
 
-    const id = Number(params.id);
+    const { id: rawId } = await params;
+    const id = Number(rawId);
     const { krajPerioda } = await req.json();
 
     const existing = await prisma.periodZaBiranje.findUnique({

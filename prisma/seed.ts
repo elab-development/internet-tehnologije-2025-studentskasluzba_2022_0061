@@ -15,7 +15,11 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-    await prisma.$executeRaw`TRUNCATE TABLE "Fakultet" CASCADE`
+    const alreadySeeded = await prisma.fakultet.count()
+    if (alreadySeeded > 0) {
+        console.log('Seed skipped: data already exists.')
+        return
+    }
 
     console.log('pocinjem seeding...')
 

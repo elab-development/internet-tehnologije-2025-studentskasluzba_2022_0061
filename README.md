@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studentska Sluzba App
 
-## Getting Started
+## Opis aplikacije
+Studentska Sluzba App je web aplikacija za digitalizaciju kljucnih procesa studentske sluzbe.  
+Sistem pokriva:
+- autentikaciju korisnika (student/admin),
+- biranje predmeta i pregled licnih predmeta,
+- prijavu ispita/kolokvijuma i unos ocena,
+- upravljanje periodima prijave i realizacijama (admin),
+- notifikacije i studentske molbe,
+- prikaz API dokumentacije preko Swagger UI.
 
-First, run the development server:
+## Korišćene tehnologije - sažet prikaz
+- `Next.js 15` + `React 18` + `TypeScript` (frontend i backend API rute),
+- `Prisma ORM` + `PostgreSQL` (baza i pristup podacima),
+- `Tailwind CSS` + `shadcn/radix` (UI sloj),
+- `JWT` (`jsonwebtoken`) za autentifikaciju preko cookie-ja,
+- `Swagger UI` + OpenAPI specifikacija za dokumentovanje API-ja,
+- `Vitest` za unit i integration testove,
+- eksterni API servisi: `Nager.Date` (državni praznici) i `Resend` (email potvrde).
+- `recharts` za vizuelizaciju
 
+## Pokretanje aplikacije
+
+Ispod su jedine dve podržane varijante pokretanja.
+
+### 1) Development: app lokalno, samo PostgreSQL u Docker-u
+1. Instalirati zavisnosti:
+```bash
+npm install
+```
+2. Popuniti `.env` (skeleton dat u `.env.example`). Obavezno:
+```env
+DATABASE_URL=postgresql://postgres:prisma@localhost:5432/postgres?schema=public
+JWT_SECRET=your-secret
+JWT_MAX_AGE=3600
+RESEND_API_KEY=apikey
+RESEND_FROM_EMAIL=optional
+```
+3. Pokrenuti samo bazu:
+```bash
+docker compose -f docker-compose.postgres.yml up -d
+```
+4. Primeniti migracije:
+```bash
+npx prisma migrate deploy
+```
+5. Popuniti bazu sa početnim podacima
+```bash
+npx prisma db seed
+```
+6. Pokrenuti dev server lokalno:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App: `http://localhost:3000`  
+Swagger: `http://localhost:3000/swagger`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2) Production-like: sve u Docker-u (full compose)
+1. Popuni `.env.docker` na osnovu istog skeletona, obratiti pažnju na imena hostova za inter-kontejnersko umrežavanje:
+```env
+DATABASE_URL=postgresql://postgres:prisma@postgres:5432/postgres?schema=public
+JWT_SECRET=your-secret
+JWT_MAX_AGE=3600
+RESEND_API_KEY=apikey
+RESEND_FROM_EMAIL=optional
+```
+2. Pokrenuti kontejnerizovanu aplikaciju:
+```bash
+docker compose -f docker-compose.full.yml up --build -d
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Napomena: `app` servis kreće tek kada `prisma-migrate` i `prisma-seed` završe uspešno.
 
-## Learn More
+### Stop komande
+- Development DB:
+```bash
+docker compose -f docker-compose.postgres.yml down
+```
+- Full app:
+```bash
+docker compose -f docker-compose.full.yml down
+```
+- Full reset (uključujući bazu/volume):
+```bash
+docker compose -f docker-compose.full.yml down -v --remove-orphans
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testiranje
+```bash
+npm run test
+npm run test:unit
+npm run test:integration
+```
