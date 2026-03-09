@@ -1,11 +1,10 @@
 name: Seed Production DB
 
 on:
-
   workflow_dispatch:
 
 jobs:
-
+  seed:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
