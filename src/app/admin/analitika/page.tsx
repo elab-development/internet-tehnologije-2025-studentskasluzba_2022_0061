@@ -116,6 +116,7 @@ export default function AnalitikaPage() {
                 Nema podataka za prikaz grafikona.
               </p>
             ) : (
+              //rechart pozvan
               <div className="h-[360px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
